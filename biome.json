@@ -3,7 +3,10 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "preset": "recommended"
+      "preset": "recommended",
+      "correctness": {
+        "noUnusedImports": "on"
+      }
     }
   },
   "formatter": {
@@ -32,5 +35,25 @@
   },
   "files": {
     "includes": ["**", "!.next", "!node_modules", "!dist", "!build", "!public"]
+  },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              [":BUN:", ":NODE:"],
+              ":BLANK_LINE:",
+              [":PACKAGE:", "!@myown/**"],
+              ":BLANK_LINE:",
+              "@myown/**",
+              ":BLANK_LINE:",
+              [":ALIAS:", ":PATH:"]
+            ]
+          }
+        }
+      }
+    }
   }
 }

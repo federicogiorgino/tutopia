@@ -1,4 +1,5 @@
-import { FloatingNavbar } from "@/components/floating-navbar";
+import { Modals } from "@/components/modals";
+import { Navbar } from "@/components/navbar";
 
 export default function MainLayout({
   children,
@@ -7,7 +8,8 @@ export default function MainLayout({
 }>) {
   return (
     <div>
-      <FloatingNavbar />
+      <Navbar />
+      <Modals />
       {children}
     </div>
   );

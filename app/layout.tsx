@@ -1,12 +1,17 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+
 import { Providers } from "@/components/providers";
+import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 
-const jetbrainsMonoHeading = JetBrains_Mono({subsets:['latin'],variable:'--font-heading'});
+const jetbrainsMonoHeading = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-heading",
+});
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,7 +50,10 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Providers>
           {/* Keep centering off body: modal scroll locking adjusts its margins. */}
-          <div>
+          <div
+          // className="" stylign in the future
+          >
+            <Toaster />
             {children}
           </div>
         </Providers>
