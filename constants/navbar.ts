@@ -8,3 +8,7 @@ export const NAVBAR_SECONDARY_ACTION: NavbarLink = { label: "Log in", href: "/lo
 export const NAVBAR_PRIMARY_ACTION: NavbarLink = { label: "Get Started", href: "/register" };
 export const NAVBAR_DESKTOP_QUERY = "(min-width: 768px)";
 export const NAVBAR_LINK_STYLE = "rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
+export const NAVBAR_RESOURCE_HREF = "/examples/code-snippet";
+export const NAVBAR_SEARCH_ITEMS = [
+  { label: "Code snippet", href: NAVBAR_RESOURCE_HREF, description: "Create and format a code snippet." },
+];

@@ -6,10 +6,9 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="container mx-auto">
+    <div>
       <FloatingNavbar />
       {children}
     </div>
   );
 }
-
