@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Geist, Geist_Mono, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
+const jetbrainsMonoHeading = JetBrains_Mono({subsets:['latin'],variable:'--font-heading'});
+
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +30,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
+      suppressHydrationWarning
       lang="en"
       className={cn(
         "h-full",
@@ -36,10 +39,16 @@ export default function RootLayout({
         geistMono.variable,
         "font-sans",
         inter.variable,
+        jetbrainsMonoHeading.variable,
       )}
     >
-      <body className="min-h-full flex flex-col container justify-center items-center mx-auto">
-        <Providers>{children}</Providers>
+      <body className="min-h-full flex flex-col">
+        <Providers>
+          {/* Keep centering off body: modal scroll locking adjusts its margins. */}
+          <div className="container mx-auto flex flex-1 flex-col items-center justify-center">
+            {children}
+          </div>
+        </Providers>
       </body>
     </html>
   );
