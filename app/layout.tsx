@@ -45,7 +45,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Providers>
           {/* Keep centering off body: modal scroll locking adjusts its margins. */}
-          <div className="container mx-auto flex flex-1 flex-col items-center justify-center">
+          <div>
             {children}
           </div>
         </Providers>
