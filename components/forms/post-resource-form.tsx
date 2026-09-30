@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -23,40 +22,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const schema = z
-  .object({
-    kind: z.enum(["post", "blog", "link"]),
-    title: z.string().trim().min(1, "Enter a title."),
-    summary: z
-      .string()
-      .trim()
-      .max(500, "Keep the summary under 500 characters."),
-    body: z.string(),
-    url: z.string(),
-    tags: z.array(z.string().min(1)).max(8),
-  })
-  .superRefine((data, context) => {
-    if (data.kind === "link") {
-      if (!z.url().safeParse(data.url).success)
-        context.addIssue({
-          code: "custom",
-          path: ["url"],
-          message: "Enter a valid URL.",
-        });
-    } else if (!data.body.trim())
-      context.addIssue({
-        code: "custom",
-        path: ["body"],
-        message: "Write some content.",
-      });
-  });
-
-type Values = z.infer<typeof schema>;
+import { postResourceFormSchema } from "@/schemas/post-resource";
+import type { PostResourceFormValues } from "@/types/post-resource";
 
 export function PostResourceForm() {
-  const form = useForm<Values>({
-    resolver: zodResolver(schema),
+  const form = useForm<PostResourceFormValues>({
+    resolver: zodResolver(postResourceFormSchema),
     defaultValues: {
       kind: "post",
       title: "",

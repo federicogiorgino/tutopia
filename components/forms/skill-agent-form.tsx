@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
@@ -24,22 +23,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
-const schema = z.object({
-  kind: z.enum(["agent", "skill"]),
-  name: z.string().trim().min(1, "Enter a name."),
-  summary: z.string().trim().min(1, "Describe what it does."),
-  version: z.string().trim().min(1, "Enter a version."),
-  framework: z.string().trim(),
-  instructions: z.string().trim().min(1, "Add initial instructions."),
-  sourceUrl: z.union([z.literal(""), z.url("Enter a valid URL.")]),
-  tags: z.array(z.string().min(1)).max(8),
-});
-type Values = z.infer<typeof schema>;
+import { skillAgentFormSchema } from "@/schemas/skill-agent";
+import type { SkillAgentFormValues } from "@/types/skill-agent";
 
 export function SkillAgentForm() {
-  const form = useForm<Values>({
-    resolver: zodResolver(schema),
+  const form = useForm<SkillAgentFormValues>({
+    resolver: zodResolver(skillAgentFormSchema),
     defaultValues: {
       kind: "skill",
       name: "",

@@ -21,13 +21,6 @@ import { PostResourceForm } from "../forms/post-resource-form";
 import { SkillAgentForm } from "../forms/skill-agent-form";
 import { MediaTypeSwitcher } from "../media-type-switcher";
 
-const FORMS: Record<ResourceModalView, ReactNode> = {
-  select: <MediaTypeSwitcher />,
-  snippet: <CodeSnippetForm />,
-  post: <PostResourceForm />,
-  skill: <SkillAgentForm />,
-};
-
 const MODAL_TITLE: Record<ResourceModalView, string> = {
   select: "What do you want to create?",
   snippet: "New snippet",
@@ -52,6 +45,12 @@ export function ResourceModal() {
     isSelect && "sm:min-w-md",
     !isSelect && "sm:min-w-xl",
   );
+  const forms: Record<ResourceModalView, ReactNode> = {
+    select: <MediaTypeSwitcher />,
+    snippet: <CodeSnippetForm onCreated={close} />,
+    post: <PostResourceForm />,
+    skill: <SkillAgentForm />,
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && close()}>
@@ -60,7 +59,7 @@ export function ResourceModal() {
           <DialogTitle>{MODAL_TITLE[view]}</DialogTitle>
           <DialogDescription>{MODAL_DESCRIPTION[view]}</DialogDescription>
         </DialogHeader>
-        {FORMS[view]}
+        {forms[view]}
       </DialogContent>
     </Dialog>
   );

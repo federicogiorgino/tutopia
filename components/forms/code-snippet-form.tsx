@@ -2,7 +2,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { CodeSnippetField } from "@/components/code-snippet-field";
 import { Button } from "@/components/ui/button";
@@ -22,26 +21,19 @@ import {
   ResourceTagsField,
   ResourceTextField,
 } from "@/components/ui/resource-fields";
+import { useCreateSnippet } from "@/hooks/use-snippets";
+import { codeSnippetFormSchema } from "@/schemas/code-snippet";
+import type { CodeSnippetFormValues } from "@/types/code-snippet";
 
-export const codeSnippetFormSchema = z.object({
-  title: z.string().trim().min(1, "Enter a title."),
-  description: z
-    .string()
-    .trim()
-    .min(1, "Describe your snippet.")
-    .max(500, "Keep the description under 500 characters."),
-  snippet: z.object({
-    language: z.string().min(1, "Choose a language."),
-    code: z.string().min(1, "Enter some code."),
-  }),
-  tags: z.array(z.string().min(1)).max(8),
-});
-
-type Values = z.infer<typeof codeSnippetFormSchema>;
-
-export function CodeSnippetForm() {
-  const form = useForm<Values>({
+export function CodeSnippetForm({
+  onCreated,
+}: {
+  onCreated?: () => void;
+} = {}) {
+  const createSnippet = useCreateSnippet();
+  const form = useForm<CodeSnippetFormValues>({
     resolver: zodResolver(codeSnippetFormSchema),
+    mode: "onChange",
     defaultValues: {
       title: "",
       description: "",
@@ -50,8 +42,17 @@ export function CodeSnippetForm() {
     },
   });
 
-  const onSubmit = () => {
-    toast.info("Publishing is not connected yet. Your form is ready to use.");
+  const onSubmit = async (values: CodeSnippetFormValues) => {
+    try {
+      await createSnippet.mutateAsync(values);
+      toast.success("Snippet saved.");
+      form.reset();
+      onCreated?.();
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Could not save snippet.",
+      );
+    }
   };
 
   return (
@@ -112,9 +113,13 @@ export function CodeSnippetForm() {
         </Button>
         <Button
           type="submit"
-          disabled={!form.formState.isValid || form.formState.isSubmitting}
+          disabled={
+            !form.formState.isValid ||
+            form.formState.isSubmitting ||
+            createSnippet.isPending
+          }
         >
-          Save snippet
+          {createSnippet.isPending ? "Saving…" : "Save snippet"}
         </Button>
       </FormActions>
     </FormShell>

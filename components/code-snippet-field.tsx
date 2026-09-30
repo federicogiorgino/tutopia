@@ -31,12 +31,7 @@ import {
   useRef,
   useState,
 } from "react";
-import type {
-  Control,
-  FieldPathByValue,
-  FieldPathValue,
-  FieldValues,
-} from "react-hook-form";
+import type { FieldPathValue, FieldValues } from "react-hook-form";
 import { Controller } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
@@ -67,6 +62,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import type {
+  CodeSnippetFieldProps,
+  CodeSnippetValue,
+} from "@/types/code-snippet";
 import {
   canFormatSnippet,
   formatSnippet,
@@ -100,18 +99,6 @@ function ActionTooltip({
     </TooltipProvider>
   );
 }
-export type CodeSnippetValue = { language: string; code: string };
-export type CodeSnippetFieldProps<T extends FieldValues> = {
-  name: FieldPathByValue<T, CodeSnippetValue>;
-  control: Control<T>;
-  label?: string;
-  description?: string;
-  placeholder?: string;
-  defaultLanguage?: string;
-  disabled?: boolean;
-  expandable?: boolean;
-};
-
 export const snippetLanguages = [
   { value: "javascript", label: "JavaScript", extension: javascript() },
   {
