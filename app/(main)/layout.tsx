@@ -7,10 +7,10 @@ export default function MainLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <>
       <Navbar />
       <Modals />
-      {children}
-    </div>
+      <div className="mx-auto container">{children}</div>
+    </>
   );
 }

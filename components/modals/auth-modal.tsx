@@ -1,4 +1,3 @@
-// components/auth/AuthModal.tsx
 "use client";
 
 import {

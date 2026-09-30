@@ -1,24 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldLabel,
-} from "@/components/ui/field";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  canFormatSnippet,
-  formatSnippet,
-  snippetLanguageExtension,
-} from "@/utils/code-snippets";
 import { cpp } from "@codemirror/lang-cpp";
 import { css } from "@codemirror/lang-css";
 import { go } from "@codemirror/lang-go";
@@ -43,26 +24,12 @@ import CodeMirror from "@uiw/react-codemirror";
 import { Check, Copy, Expand, LoaderCircle, WandSparkles } from "lucide-react";
 import { useTheme } from "next-themes";
 import {
-  Dialog,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipProvider,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
-import {
+  type ComponentProps,
   forwardRef,
   useEffect,
   useMemo,
   useRef,
   useState,
-  type ComponentProps,
 } from "react";
 import type {
   Control,
@@ -71,6 +38,40 @@ import type {
   FieldValues,
 } from "react-hook-form";
 import { Controller } from "react-hook-form";
+
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  canFormatSnippet,
+  formatSnippet,
+  snippetLanguageExtension,
+} from "@/utils/code-snippets";
 
 function ActionTooltip({
   label,
@@ -88,7 +89,6 @@ function ActionTooltip({
           <span
             className="inline-flex text-muted-foreground hover:text-foreground"
             tabIndex={disabled ? 0 : undefined}
-            aria-label={disabled ? label : undefined}
           >
             {children}
           </span>
@@ -109,6 +109,7 @@ export type CodeSnippetFieldProps<T extends FieldValues> = {
   placeholder?: string;
   defaultLanguage?: string;
   disabled?: boolean;
+  expandable?: boolean;
 };
 
 export const snippetLanguages = [
@@ -137,7 +138,7 @@ export const snippetLanguages = [
 ] satisfies { value: string; label: string; extension: Extension }[];
 
 const editorStyle = EditorView.theme({
-  "&": { fontSize: "14px" },
+  "&": { fontSize: "var(--snippet-editor-font-size, 1rem)" },
   // Keep GitHub's token colors, but let the shadcn input shell own the surface.
   "&.cm-editor": {
     backgroundColor: "transparent",
@@ -184,6 +185,7 @@ const SnippetEditor = forwardRef<
   HTMLElement,
   {
     expanded?: boolean;
+    expandable?: boolean;
     value: CodeSnippetValue;
     onChange: (value: CodeSnippetValue) => void;
     onBlur: () => void;
@@ -197,6 +199,7 @@ const SnippetEditor = forwardRef<
 >(function SnippetEditorImpl(
   {
     expanded = false,
+    expandable = true,
     value,
     onChange,
     onBlur,
@@ -384,7 +387,7 @@ const SnippetEditor = forwardRef<
             )}
           </Button>
         </ActionTooltip>
-        {!expanded && (
+        {expandable && !expanded && (
           <Dialog open={open} onOpenChange={setOpen}>
             <ActionTooltip label="Expand editor" disabled={disabled}>
               <DialogTrigger asChild>
@@ -393,7 +396,6 @@ const SnippetEditor = forwardRef<
                   variant="ghost"
                   size="icon-sm"
                   aria-label="Expand editor"
-
                   disabled={disabled}
                 >
                   <Expand aria-hidden="true" />
@@ -406,7 +408,7 @@ const SnippetEditor = forwardRef<
                 if ((event.target as HTMLElement).closest(".cm-editor"))
                   event.preventDefault();
               }}
-              className="max-h-[95dvh] w-[95vw] max-w-6xl overflow-auto sm:max-w-6xl"
+              className="sm:max-h-[95dvh] sm:max-w-6xl"
             >
               <div className="mb-4 flex items-center justify-between gap-4">
                 <DialogTitle className="text-lg font-semibold">
@@ -462,7 +464,7 @@ const SnippetEditor = forwardRef<
           placeholder={placeholder}
           minHeight={expanded ? "55dvh" : "160px"}
           maxHeight={expanded ? "65dvh" : "400px"}
-          className="min-w-0"
+          className="min-w-0 [--snippet-editor-font-size:1rem] md:[--snippet-editor-font-size:0.875rem]"
           data-disabled={disabled}
         />
       </div>
@@ -489,6 +491,7 @@ export function CodeSnippetField<T extends FieldValues>({
   placeholder = "Type or paste code…",
   defaultLanguage = "javascript",
   disabled,
+  expandable = true,
 }: CodeSnippetFieldProps<T>) {
   return (
     <Controller
@@ -520,6 +523,7 @@ export function CodeSnippetField<T extends FieldValues>({
             <SnippetEditor
               ref={field.ref}
               id={field.name}
+              expandable={expandable}
               aria-invalid={fieldState.invalid}
               aria-describedby={
                 fieldState.invalid

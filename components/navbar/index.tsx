@@ -1,8 +1,8 @@
 import { NavbarBrand } from "@/components/navbar/navbar-brand";
 import { NavbarSearch } from "@/components/navbar/navbar-search";
 import { getServerSession } from "@/lib/get-server-session";
-import { NavbarLogged } from "./navbar/navbar-logged";
-import { NavbarNotLogged } from "./navbar/navbar-not-logged";
+import { NavbarLogged } from "./navbar-logged";
+import { NavbarNotLogged } from "./navbar-not-logged";
 
 export async function Navbar() {
   const session = await getServerSession();

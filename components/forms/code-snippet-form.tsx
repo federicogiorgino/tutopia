@@ -1,30 +1,40 @@
 "use client";
-import {
-  FormShell,
-  FormSection,
-  FormActions,
-} from "@/components/ui/form-layout";
-
-import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { CodeSnippetField } from "@/components/code-snippet-field";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Field,
-  FieldLabel,
   FieldDescription,
   FieldError,
+  FieldLabel,
 } from "@/components/ui/field";
+import {
+  FormActions,
+  FormSection,
+  FormShell,
+} from "@/components/ui/form-layout";
+import { Input } from "@/components/ui/input";
+import {
+  ResourceTagsField,
+  ResourceTextField,
+} from "@/components/ui/resource-fields";
 
 export const codeSnippetFormSchema = z.object({
   title: z.string().trim().min(1, "Enter a title."),
+  description: z
+    .string()
+    .trim()
+    .min(1, "Describe your snippet.")
+    .max(500, "Keep the description under 500 characters."),
   snippet: z.object({
     language: z.string().min(1, "Choose a language."),
     code: z.string().min(1, "Enter some code."),
   }),
+  tags: z.array(z.string().min(1)).max(8),
 });
 
 type Values = z.infer<typeof codeSnippetFormSchema>;
@@ -32,19 +42,21 @@ type Values = z.infer<typeof codeSnippetFormSchema>;
 export function CodeSnippetForm() {
   const form = useForm<Values>({
     resolver: zodResolver(codeSnippetFormSchema),
-    defaultValues: { title: "", snippet: { language: "javascript", code: "" } },
+    defaultValues: {
+      title: "",
+      description: "",
+      snippet: { language: "javascript", code: "" },
+      tags: [],
+    },
   });
 
-  const onSubmit = (v: Values) => {
-    console.log(v);
+  const onSubmit = () => {
+    toast.info("Publishing is not connected yet. Your form is ready to use.");
   };
 
   return (
     <FormShell surface="plain" onSubmit={form.handleSubmit(onSubmit)}>
-      <FormSection
-        title="Create a snippet"
-        description="Give your code a name and choose its language."
-      >
+      <FormSection>
         <Controller
           control={form.control}
           name="title"
@@ -72,11 +84,21 @@ export function CodeSnippetForm() {
             </Field>
           )}
         />
+        <ResourceTextField
+          control={form.control}
+          name="description"
+          label="Description"
+          placeholder="What does this snippet do?"
+          description="A short explanation to help others use it."
+          multiline
+        />
         <CodeSnippetField
           control={form.control}
           name="snippet"
           description="Choose a language for syntax highlighting."
+          expandable={false}
         />
+        <ResourceTagsField control={form.control} name="tags" />
       </FormSection>
       <FormActions>
         <Button
@@ -88,7 +110,12 @@ export function CodeSnippetForm() {
         >
           Reset
         </Button>
-        <Button type="submit">Save snippet</Button>
+        <Button
+          type="submit"
+          disabled={!form.formState.isValid || form.formState.isSubmitting}
+        >
+          Save snippet
+        </Button>
       </FormActions>
     </FormShell>
   );
